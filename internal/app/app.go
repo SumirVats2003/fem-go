@@ -1,20 +1,28 @@
 package app
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/SumirVats2003/fem-go/internal/api"
+	"github.com/SumirVats2003/fem-go/internal/store"
 )
 
 type App struct {
 	Logger         *log.Logger
 	WorkoutHandler *api.WorkoutHandler
+	DB             *sql.DB
 }
 
 func InitApp() (*App, error) {
+	postgres, err := store.ConnectDB()
+	if err != nil {
+		return nil, err
+	}
+
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
 	// our stores will go here
@@ -25,6 +33,7 @@ func InitApp() (*App, error) {
 	app := &App{
 		Logger:         logger,
 		WorkoutHandler: workoutHandler,
+		DB:             postgres,
 	}
 
 	return app, nil
