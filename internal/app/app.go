@@ -9,6 +9,7 @@ import (
 
 	"github.com/SumirVats2003/fem-go/internal/api"
 	"github.com/SumirVats2003/fem-go/internal/store"
+	"github.com/SumirVats2003/fem-go/migrations"
 )
 
 type App struct {
@@ -21,6 +22,11 @@ func InitApp() (*App, error) {
 	postgres, err := store.ConnectDB()
 	if err != nil {
 		return nil, err
+	}
+
+	err = store.MigrateFS(postgres, migrations.FS, ".")
+	if err != nil {
+		panic(err)
 	}
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
